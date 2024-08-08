@@ -17,7 +17,7 @@ public class Message {
 
   // username
 
-  private String sender;
+  private String senderUserName;
 
   private LocalDateTime time;
 }
