@@ -1,5 +1,7 @@
 package com.akhilesh.Online_Learning_Project.Service;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,13 +18,16 @@ public class studentService {
   @Autowired
   private UserRepository userRepository;
 
+
   public boolean signup(Student s){
-    Student x=new Student();
-    x.setName(s.getName());
-    x.setUsername(s.getUsername());
-    x.setPassword(s.getPassword());
-    x.setAddress(s.getAddress());
-    studentRepository.save(x);
+    studentRepository.save(s);
+    User u=new User();
+    u.setName(s.getName());
+    u.setUsername(s.getUsername());
+    u.setPassword(s.getPassword());
+    u.setRoles("USER");
+    u.setUserId(UUID.randomUUID().toString());
+    userRepository.save(u);
     return true;
   }
 

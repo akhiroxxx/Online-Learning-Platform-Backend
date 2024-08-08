@@ -11,7 +11,7 @@ import com.akhilesh.Online_Learning_Project.Repository.CourseRepository;
 
 @Service
 public class courseService {
-  @Autowired
+  @Autowired 
   private CourseRepository courseRepository;
 
 

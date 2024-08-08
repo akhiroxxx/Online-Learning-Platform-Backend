@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.akhilesh.Online_Learning_Project.Service.courseService;
 import com.akhilesh.Online_Learning_Project.Model.Course;
-import com.akhilesh.Online_Learning_Project.Repository.CourseRepository;
 
 
 @RestController
