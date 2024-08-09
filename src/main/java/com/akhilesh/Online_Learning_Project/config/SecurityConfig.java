@@ -15,7 +15,7 @@ import com.akhilesh.Online_Learning_Project.Security.JwtAuthenticationEntryPoint
 import com.akhilesh.Online_Learning_Project.Security.JwtAuthenticationFilter;
 
 @Configuration
-public class SecurityConfig {
+public class SecurityConfig{
 
   @Autowired
   private JwtAuthenticationEntryPoint point;
@@ -31,7 +31,7 @@ public class SecurityConfig {
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-    http.csrf(csrf->csrf.disable()).cors(cors->cors.disable()).authorizeHttpRequests(auth->auth.requestMatchers("/login","/signup","/home").permitAll().anyRequest().authenticated());
+    http.csrf(csrf->csrf.disable()).cors(cors->cors.disable()).authorizeHttpRequests(auth->auth.requestMatchers("/login","/signup","/home","/auth/login").permitAll().anyRequest().permitAll());
     http.exceptionHandling(ex->ex.authenticationEntryPoint(point));
     http.sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
@@ -40,12 +40,18 @@ public class SecurityConfig {
     return http.build();
   }
 
+
+  @Bean
   public DaoAuthenticationProvider doDaoAuthenticationProvider(){
-    DaoAuthenticationProvider provider=new DaoAuthenticationProvider();
-    provider.setUserDetailsService(userDetailsService);
-    provider.setPasswordEncoder(passwordEncoder);
-    return provider;
+    DaoAuthenticationProvider daoAuthenticationProvider=new DaoAuthenticationProvider();
+    daoAuthenticationProvider.setUserDetailsService(userDetailsService);
+    daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
+    return daoAuthenticationProvider;
   }
+
+  
+
+
 
 
 }

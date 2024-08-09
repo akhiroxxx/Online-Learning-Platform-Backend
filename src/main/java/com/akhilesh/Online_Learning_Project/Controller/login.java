@@ -21,9 +21,9 @@ public class login {
 
 
   // Logging in is for Student, Instructor & Admin
-  @PostMapping("/login")
-  public boolean logging(@RequestBody User s){
-    return studentService.login(s);
-  }
+  // @PostMapping("/login")
+  // public boolean logging(@RequestBody User s){
+  //   return studentService.login(s);
+  // }
   
 }
