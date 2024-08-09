@@ -1,7 +1,6 @@
 package com.akhilesh.Online_Learning_Project.Security;
 
 import java.io.IOException;
-import java.nio.charset.MalformedInputException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

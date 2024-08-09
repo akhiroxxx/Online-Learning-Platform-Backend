@@ -25,7 +25,7 @@ public class studentService {
     u.setName(s.getName());
     u.setUsername(s.getUsername());
     u.setPassword(s.getPassword());
-    u.setRoles("USER");
+    u.setRole("USER");
     u.setUserId(UUID.randomUUID().toString());
     userRepository.save(u);
     return true;

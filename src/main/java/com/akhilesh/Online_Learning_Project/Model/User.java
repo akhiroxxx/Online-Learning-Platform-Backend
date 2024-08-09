@@ -1,10 +1,11 @@
 package com.akhilesh.Online_Learning_Project.Model;
 
-import java.util.Collection;
+import java.util.*;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.Data;
@@ -17,16 +18,22 @@ public class User implements UserDetails{
   public String name;
   public String username;
   public String password;
-  public String roles;
+  public String role;
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    // TODO Auto-generated method stub
-    return null;
+    SimpleGrantedAuthority simpleGrantedAuthority=new SimpleGrantedAuthority(this.getRole());
+    
+    return List.of(simpleGrantedAuthority);
     }
 
     @Override
     public String getUsername(){
       return this.username;
+    }
+
+    @Override
+    public String getPassword(){
+      return this.password; 
     }
 
     @Override

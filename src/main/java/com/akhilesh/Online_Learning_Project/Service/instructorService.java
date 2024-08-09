@@ -23,7 +23,7 @@ public class instructorService {
     u.setName(i.getName());
     u.setUsername(i.getUsername());
     u.setPassword(i.getPassword());
-    u.setRoles("INSTRUCTOR");
+    u.setRole("INSTRUCTOR");
     u.setUserId(UUID.randomUUID().toString());
     userRepository.save(u);
     return true;
