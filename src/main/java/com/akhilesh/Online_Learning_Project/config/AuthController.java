@@ -23,7 +23,6 @@ import com.akhilesh.Online_Learning_Project.Model.JwtResponse;
 import com.akhilesh.Online_Learning_Project.Security.JwtHelper;
 
 @RestController
-@RequestMapping("/auth")
 public class AuthController {
   
   @Autowired

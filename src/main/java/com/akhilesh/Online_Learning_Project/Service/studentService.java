@@ -24,11 +24,12 @@ public class studentService {
   private PasswordEncoder passwordEncoder;
 
   public boolean signup(Student s){
+    s.setPassword(passwordEncoder.encode(s.getPassword()));
     studentRepository.save(s);
     User u=new User();
     u.setName(s.getName());
     u.setUsername(s.getUsername());
-    u.setPassword(passwordEncoder.encode(s.getPassword()));
+    u.setPassword(s.getPassword());
     u.setRole("USER");
     u.setUserId(UUID.randomUUID().toString());
     userRepository.save(u);

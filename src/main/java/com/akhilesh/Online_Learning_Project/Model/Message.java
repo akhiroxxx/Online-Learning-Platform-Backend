@@ -2,6 +2,8 @@ package com.akhilesh.Online_Learning_Project.Model;
 
 import java.time.LocalDateTime;
 
+import org.bson.codecs.jsr310.LocalDateCodec;
+import org.bson.codecs.jsr310.LocalDateTimeCodec;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.AllArgsConstructor;

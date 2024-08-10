@@ -1,7 +1,7 @@
 package com.akhilesh.Online_Learning_Project.Model;
 
+import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.AllArgsConstructor;
@@ -16,6 +16,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Student extends User {
   private String address;
-  private List<Course> coursesRegistered;
-  private List<Message> myMessages;
+  private List<Course> coursesRegistered=new ArrayList<>();
+  private List<Message> myMessages=new ArrayList<>();
 }

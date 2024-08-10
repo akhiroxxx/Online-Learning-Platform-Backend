@@ -1,6 +1,7 @@
 package com.akhilesh.Online_Learning_Project.Model;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -19,9 +20,9 @@ public class Course {
  private String Instructor;
 
 
-  private List<Message> courseMessages;
+  private List<Message> courseMessages=new ArrayList<>();
  
 
   // List<username>
-  private List<String> studentsEnrolled;
+  private List<String> studentsEnrolled=new ArrayList<>();
 }

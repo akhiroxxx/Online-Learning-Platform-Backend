@@ -26,6 +26,15 @@ public class courseService {
 
   public Course getCourse(String courseName){
       // return courseRepository.find({"courseName" : courseName});
+      List<Course> allCourses=this.getAllCourses();
+      for(int i=0;i<allCourses.size();i++)
+      {
+        if(courseName.equals(allCourses.get(i).getCourseName()))
+        {
+          return allCourses.get(i);
+        }
+
+      }
       Course x = new Course();
       return x;
   }

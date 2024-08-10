@@ -1,6 +1,7 @@
 package com.akhilesh.Online_Learning_Project.Model;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -15,7 +16,7 @@ import lombok.NoArgsConstructor;
 public class Instructor extends User {
   private Integer age;
 
-  private List<Course> coursesTaught;
+  private List<Course> coursesTaught=new ArrayList<>();
   
-  private List<Message> myNotifications;
+  private List<Message> myNotifications=new ArrayList<>();
 }
