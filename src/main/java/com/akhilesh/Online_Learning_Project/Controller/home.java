@@ -53,8 +53,6 @@ public class home {
   @Autowired
   private StudentRepository studentRepository;
 
-  @Autowired
-  private InstructorRepository instructorRepository;
 
   @Autowired
   private MessageRepository messageRepository;
@@ -79,48 +77,6 @@ public class home {
     return courseService.getCourse(courseName);
   }
 
-
-  @SuppressWarnings("unchecked")
-  @PostMapping("/courses/instructor/{courseName}/{msg}")
-  public Message sendNotif(@PathVariable String courseName, @PathVariable String msg){
-    Message m=new Message();
-    Course course_temp=this.getCourse(courseName);
-    if(course_temp.getCourseName()==null)
-      return m;
-    m.setContent(msg);
-    LocalDateTime now = LocalDateTime.now();
-    m.setTime(now);
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    if(authentication!=null&authentication.isAuthenticated()){
-      Object principal = authentication.getPrincipal();
-      if(principal instanceof User){
-        User user = (User) principal;
-        Instructor i_temp=instructorRepository.findByUsername(user.getUsername());
-        m.setSenderUserName(user.getUsername());
-        i_temp.getMyNotifications().add(m);
-        List<Message> x=course_temp.getCourseMessages();
-        x.add(m);
-        course_temp.setCourseMessages(x);
-        courseRepository.deleteByCourseName(courseName);
-        courseRepository.save(course_temp);
-        //  deleting
-        userRepository.deleteByUsername(user.getUsername());
-        instructorRepository.deleteByUsername(user.getUsername());
-        //  lines from signup
-        i_temp.setPassword(passwordEncoder.encode(i_temp.getPassword()));
-        instructorRepository.save(i_temp);
-        User u=new User();
-        u.setName(i_temp.getName());
-        u.setUsername(i_temp.getUsername());
-        u.setPassword(i_temp.getPassword());
-        u.setRole("INSTRUCTOR");
-        u.setUserId(UUID.randomUUID().toString());
-        userRepository.save(u);   
-      }
-    }
-    return m;
-  }
-
   @SuppressWarnings("unchecked")
   @PostMapping("/courses/{courseName}/{msg}")
   public Message sendMessage(@PathVariable String courseName, @PathVariable String msg){
@@ -139,14 +95,13 @@ public class home {
         User user = (User) principal;
         Student s_temp=studentRepository.findByUsername(user.getUsername());
         m.setSenderUserName(user.getUsername());
+        messageRepository.save(m);
         s_temp.getMyMessages().add(m);
         List<Message> x=course_temp.getCourseMessages();
         x.add(m);
         course_temp.setCourseMessages(x);
         courseRepository.deleteByCourseName(courseName);
         courseRepository.save(course_temp);
-
-
         //  deleting
         userRepository.deleteByUsername(user.getUsername());
         studentRepository.deleteByUsername(user.getUsername());

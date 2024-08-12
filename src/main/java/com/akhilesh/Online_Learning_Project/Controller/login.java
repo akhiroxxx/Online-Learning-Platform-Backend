@@ -14,13 +14,14 @@ import com.akhilesh.Online_Learning_Project.Service.studentService;
 public class login {
   @Autowired
   private studentService studentService;
+
   @GetMapping("/login")
   public String LoginPage(){
     return "Login Page";
   }
 
 
-  // Logging in is for Student, Instructor & Admin
+  // Logging in is for Student, Instructor & Admin  
   // @PostMapping("/login")
   // public boolean logging(@RequestBody User s){
   //   return studentService.login(s);
