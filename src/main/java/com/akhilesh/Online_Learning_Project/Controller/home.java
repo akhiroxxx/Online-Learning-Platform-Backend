@@ -1,6 +1,9 @@
 package com.akhilesh.Online_Learning_Project.Controller;
 import java.util.List;
+import java.util.UUID;
 
+
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.apache.el.stream.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -17,11 +20,15 @@ import com.akhilesh.Online_Learning_Project.Service.courseService;
 import com.akhilesh.Online_Learning_Project.Service.customUserDetailService;
 import com.akhilesh.Online_Learning_Project.Service.studentService;
 import com.akhilesh.Online_Learning_Project.Model.Course;
+import com.akhilesh.Online_Learning_Project.Model.Instructor;
 import com.akhilesh.Online_Learning_Project.Model.Message;
 import com.akhilesh.Online_Learning_Project.Model.Student;
 import com.akhilesh.Online_Learning_Project.Model.User;
+import com.akhilesh.Online_Learning_Project.Repository.CourseRepository;
+import com.akhilesh.Online_Learning_Project.Repository.InstructorRepository;
 import com.akhilesh.Online_Learning_Project.Repository.MessageRepository;
 import com.akhilesh.Online_Learning_Project.Repository.StudentRepository;
+import com.akhilesh.Online_Learning_Project.Repository.UserRepository;
 
 import java.time.LocalDateTime;
 
@@ -32,13 +39,22 @@ public class home {
   @Autowired
   private courseService courseService;
 
+  @Autowired
+  private PasswordEncoder passwordEncoder;
 
+  @Autowired
+  private CourseRepository courseRepository;
+  @Autowired
+  private UserRepository userRepository;
 
   @Autowired
   private customUserDetailService userDetailService;
 
   @Autowired
   private StudentRepository studentRepository;
+
+  @Autowired
+  private InstructorRepository instructorRepository;
 
   @Autowired
   private MessageRepository messageRepository;
@@ -63,47 +79,91 @@ public class home {
     return courseService.getCourse(courseName);
   }
 
+
+  @SuppressWarnings("unchecked")
+  @PostMapping("/courses/instructor/{courseName}/{msg}")
+  public Message sendNotif(@PathVariable String courseName, @PathVariable String msg){
+    Message m=new Message();
+    Course course_temp=this.getCourse(courseName);
+    if(course_temp.getCourseName()==null)
+      return m;
+    m.setContent(msg);
+    LocalDateTime now = LocalDateTime.now();
+    m.setTime(now);
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if(authentication!=null&authentication.isAuthenticated()){
+      Object principal = authentication.getPrincipal();
+      if(principal instanceof User){
+        User user = (User) principal;
+        Instructor i_temp=instructorRepository.findByUsername(user.getUsername());
+        m.setSenderUserName(user.getUsername());
+        i_temp.getMyNotifications().add(m);
+        List<Message> x=course_temp.getCourseMessages();
+        x.add(m);
+        course_temp.setCourseMessages(x);
+        courseRepository.deleteByCourseName(courseName);
+        courseRepository.save(course_temp);
+        //  deleting
+        userRepository.deleteByUsername(user.getUsername());
+        instructorRepository.deleteByUsername(user.getUsername());
+        //  lines from signup
+        i_temp.setPassword(passwordEncoder.encode(i_temp.getPassword()));
+        instructorRepository.save(i_temp);
+        User u=new User();
+        u.setName(i_temp.getName());
+        u.setUsername(i_temp.getUsername());
+        u.setPassword(i_temp.getPassword());
+        u.setRole("INSTRUCTOR");
+        u.setUserId(UUID.randomUUID().toString());
+        userRepository.save(u);   
+      }
+    }
+    return m;
+  }
+
   @SuppressWarnings("unchecked")
   @PostMapping("/courses/{courseName}/{msg}")
   public Message sendMessage(@PathVariable String courseName, @PathVariable String msg){
-    Course c=this.getCourse(courseName);
-    Message m = new Message();
-    if(c.getCourseName()==null)
-    return m;
-    // to add in that course, against that sender and add messages to message-repo
+    // Message, Course and Student objects have to be modified.
+    Message m=new Message();
+    Course course_temp=this.getCourse(courseName);
+    if(course_temp.getCourseName()==null)
+      return m;
     m.setContent(msg);
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String username=authentication.getName();
-    System.out.println("Username is "+username);
-    Student s=studentRepository.findByUsername(username);
-    m.setSenderUserName(username);
     LocalDateTime now = LocalDateTime.now();
     m.setTime(now);
-    
-    // adding message to respective course
-    try
-    {
-      c.getCourseMessages().add(m);
-      System.out.println(" ");System.out.println(" ");System.out.println(" ");System.out.println(" ");System.out.println(" ");System.out.println(" ");System.out.println(" ");
-      for(int i=0;i<c.getCourseMessages().size();i++)
-      {
-        System.out.println(c.getCourseMessages().get(i)+" ");
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication != null && authentication.isAuthenticated()) {
+      Object principal = authentication.getPrincipal();
+      if (principal instanceof User) {
+        User user = (User) principal;
+        Student s_temp=studentRepository.findByUsername(user.getUsername());
+        m.setSenderUserName(user.getUsername());
+        s_temp.getMyMessages().add(m);
+        List<Message> x=course_temp.getCourseMessages();
+        x.add(m);
+        course_temp.setCourseMessages(x);
+        courseRepository.deleteByCourseName(courseName);
+        courseRepository.save(course_temp);
+
+
+        //  deleting
+        userRepository.deleteByUsername(user.getUsername());
+        studentRepository.deleteByUsername(user.getUsername());
+       //  lines from signup
+        s_temp.setPassword(passwordEncoder.encode(s_temp.getPassword()));
+        studentRepository.save(s_temp);
+        User u=new User();
+        u.setName(s_temp.getName());
+        u.setUsername(s_temp.getUsername());
+        u.setPassword(s_temp.getPassword());
+        u.setRole("USER");
+        u.setUserId(UUID.randomUUID().toString());
+        userRepository.save(u);   
       }
-      System.out.println(" ");
-      System.out.println(" ");System.out.println(" ");System.out.println(" ");System.out.println(" ");System.out.println(" ");System.out.println(" ");System.out.println(" ");
-    }
-    catch(Exception e){
-      System.out.println("not done"+ e);
-    }
-
-
-    // adding message to student object
-    
-    s.getMyMessages().add(m);
-
-    messageRepository.save(m);
-    return m;
   }
+  return m;
+}
 
 
   @PostMapping("/courses/{courseName}/register")
@@ -118,12 +178,25 @@ public class home {
                 //  System.out.println(user.getUsername());
                  Course course_temp=courseService.getCourse(courseName);
                  Student s_temp=studentRepository.findByUsername(user.getUsername());   
-                 System.out.println("Course is :"+course_temp);
-                 System.out.println("Student is:"+s_temp);
                  s_temp.getCoursesRegistered().add(course_temp);
                  course_temp.getStudentsEnrolled().add(user.getUsername());
-                 System.out.println("Course is :"+course_temp);
-                 System.out.println("Student is:"+s_temp);
+                //  deleting
+                 userRepository.deleteByUsername(user.getUsername());
+                 studentRepository.deleteByUsername(user.getUsername());
+                //  lines from signup
+                 s_temp.setPassword(passwordEncoder.encode(s_temp.getPassword()));
+                 studentRepository.save(s_temp);
+                 User u=new User();
+                 u.setName(s_temp.getName());
+                 u.setUsername(s_temp.getUsername());
+                 u.setPassword(s_temp.getPassword());
+                 u.setRole("USER");
+                 u.setUserId(UUID.randomUUID().toString());
+                 userRepository.save(u);
+                //  changes will be reflected in student but not course till here.. Afte deleting and adding to courseRepo change will
+                //  be there too
+                courseRepository.deleteByCourseName(courseName);
+                courseRepository.save(course_temp);
             }
         }
 
@@ -131,14 +204,41 @@ public class home {
     return true;
   }
 
+  @PostMapping("/courses/{courseName}/deregister")
+  public boolean deregistration(@PathVariable String courseName){
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-
-
-
-
-
-
-
+        if (authentication != null && authentication.isAuthenticated()) {
+            Object principal = authentication.getPrincipal();
+            
+            if (principal instanceof User) {
+                User user = (User) principal;
+                //  System.out.println(user.getUsername());
+                 Course course_temp=courseService.getCourse(courseName);
+                 Student s_temp=studentRepository.findByUsername(user.getUsername());   
+                 s_temp.getCoursesRegistered().remove(course_temp);
+                 course_temp.getStudentsEnrolled().remove(user.getUsername());
+                //  deleting
+                 userRepository.deleteByUsername(user.getUsername());
+                 studentRepository.deleteByUsername(user.getUsername());
+                //  lines from signup
+                 s_temp.setPassword(passwordEncoder.encode(s_temp.getPassword()));
+                 studentRepository.save(s_temp);
+                 User u=new User();
+                 u.setName(s_temp.getName());
+                 u.setUsername(s_temp.getUsername());
+                 u.setPassword(s_temp.getPassword());
+                 u.setRole("USER");
+                 u.setUserId(UUID.randomUUID().toString());
+                 userRepository.save(u);
+                //  changes will be reflected in student but not course till here.. Afte deleting and adding to courseRepo change will
+                //  be there too
+                courseRepository.deleteByCourseName(courseName);
+                courseRepository.save(course_temp);
+            }
+        }
+    return true;
+  }
 
 
   

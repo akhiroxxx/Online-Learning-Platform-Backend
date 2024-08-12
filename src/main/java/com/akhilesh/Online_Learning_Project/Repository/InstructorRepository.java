@@ -6,5 +6,6 @@ import com.akhilesh.Online_Learning_Project.Model.Instructor;
 
 
 public interface InstructorRepository extends MongoRepository<Instructor,Integer>{
-  
+  public Instructor findByUsername(String username);
+  public void deleteByUsername(String username);
 }

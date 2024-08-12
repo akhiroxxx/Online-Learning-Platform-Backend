@@ -49,25 +49,15 @@ public class AuthController {
   }
 
 
-
-
-
-
-
-
-
-
   private void doAuthenticate(String username, String password){
     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, password);
         try {
             manager.authenticate(authentication);
 
-
         } catch (BadCredentialsException e) {
             throw new BadCredentialsException(" Invalid Username or Password  !!");
         }
   }
-
 
   @ExceptionHandler(BadCredentialsException.class)
     public String exceptionHandler() {

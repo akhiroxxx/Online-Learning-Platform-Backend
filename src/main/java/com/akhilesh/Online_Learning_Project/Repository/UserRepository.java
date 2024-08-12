@@ -10,4 +10,5 @@ import com.akhilesh.Online_Learning_Project.Model.User;
 public interface UserRepository extends MongoRepository<User,String>{
   // @Query
   public User findByUsername(String username);
+  public void deleteByUsername(String username);
 }

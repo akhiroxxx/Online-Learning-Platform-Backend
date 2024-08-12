@@ -6,5 +6,5 @@ import com.akhilesh.Online_Learning_Project.Model.Course;
 
 
 public interface CourseRepository extends MongoRepository<Course,String> {
-  
+  void deleteByCourseName(String courseName);
 } 
