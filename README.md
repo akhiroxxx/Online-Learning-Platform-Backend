@@ -21,4 +21,4 @@ For a course to be added or an instructor to be added, the signed in user must h
 Java's Frameword:- Spring Boot is used as the backend framework
 The database to store is MongoDB.
 
-The UML Class Diagram and API Flowcharts can be found at: 
+The UML Class Diagram and API Flowcharts can be found at: https://github.com/akhiroxxx/Online-Learning-Platform-Backend/tree/0e1af0ebd66a63b4bc0bee4947404c4a1664e1a9/src/main/java/com/akhilesh/Online_Learning_Project/Asset
