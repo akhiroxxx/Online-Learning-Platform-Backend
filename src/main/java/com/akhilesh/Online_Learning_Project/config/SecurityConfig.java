@@ -31,7 +31,7 @@ public class SecurityConfig{
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-    http.csrf(csrf->csrf.disable()).cors(cors->cors.disable()).authorizeHttpRequests(auth->auth.requestMatchers("/login","/signup","/home","/home/courses").permitAll().anyRequest().authenticated());
+    http.csrf(csrf->csrf.disable()).cors(cors->cors.disable()).authorizeHttpRequests(auth->auth.requestMatchers("/login","/signup","/home","/home/courses").permitAll().requestMatchers("/admin/**").hasRole("ADMIN").anyRequest().authenticated());
     http.exceptionHandling(ex->ex.authenticationEntryPoint(point));
     http.sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
